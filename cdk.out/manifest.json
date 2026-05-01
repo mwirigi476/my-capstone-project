@@ -1,0 +1,107 @@
+{
+  "version": "36.0.0",
+  "artifacts": {
+    "MyWorkflowStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "MyWorkflowStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "MyWorkflowStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://093796422314/us-east-1",
+      "properties": {
+        "templateFile": "MyWorkflowStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::093796422314:role/cdk-hnb659fds-deploy-role-093796422314-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::093796422314:role/cdk-hnb659fds-cfn-exec-role-093796422314-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-093796422314-us-east-1/0a09947659ca32db746e8433d1f702a238f9c24f2eea119936eeb39c0e9c7d0b.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "MyWorkflowStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::093796422314:role/cdk-hnb659fds-lookup-role-093796422314-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "MyWorkflowStack.assets"
+      ],
+      "metadata": {
+        "/MyWorkflowStack/AppGreeting/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AppGreeting4455FE37"
+          }
+        ],
+        "/MyWorkflowStack/WorkflowTask/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkflowTaskServiceRoleCB3879DC"
+          }
+        ],
+        "/MyWorkflowStack/WorkflowTask/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkflowTaskServiceRoleDefaultPolicy849A8BA1"
+          }
+        ],
+        "/MyWorkflowStack/WorkflowTask/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkflowTask865FF66C"
+          }
+        ],
+        "/MyWorkflowStack/MyStateMachine/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyStateMachineRoleD59FFEBC"
+          }
+        ],
+        "/MyWorkflowStack/MyStateMachine/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyStateMachineRoleDefaultPolicyE468EB18"
+          }
+        ],
+        "/MyWorkflowStack/MyStateMachine/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyStateMachine6C968CA5"
+          }
+        ],
+        "/MyWorkflowStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/MyWorkflowStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/MyWorkflowStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "MyWorkflowStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

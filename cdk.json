@@ -1,0 +1,8 @@
+{
+ "app": "npx ts-node --prefer-ts-exts bin/my-capstone.ts",
+
+  "context": {
+    "aws-cdk:enableDiffNoFail": "true",
+    "@aws-cdk/core:stackRelativeExports": true
+  }
+}

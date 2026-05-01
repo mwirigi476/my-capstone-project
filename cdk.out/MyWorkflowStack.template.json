@@ -1,0 +1,266 @@
+{
+ "Resources": {
+  "AppGreeting4455FE37": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/app/config/greeting",
+    "Type": "String",
+    "Value": "Hello from CI/CD Automated Infrastructure!"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyWorkflowStack/AppGreeting/Resource"
+   }
+  },
+  "WorkflowTaskServiceRoleCB3879DC": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyWorkflowStack/WorkflowTask/ServiceRole/Resource"
+   }
+  },
+  "WorkflowTaskServiceRoleDefaultPolicy849A8BA1": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ssm:DescribeParameters",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:GetParameterHistory"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:us-east-1:093796422314:parameter",
+          {
+           "Ref": "AppGreeting4455FE37"
+          }
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "WorkflowTaskServiceRoleDefaultPolicy849A8BA1",
+    "Roles": [
+     {
+      "Ref": "WorkflowTaskServiceRoleCB3879DC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyWorkflowStack/WorkflowTask/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "WorkflowTask865FF66C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-093796422314-us-east-1",
+     "S3Key": "be9f8155d64b7ba787de8265217b74fcfee76b98c963b01d410e22d3a5cc2714.zip"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "WorkflowTaskServiceRoleCB3879DC",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x"
+   },
+   "DependsOn": [
+    "WorkflowTaskServiceRoleDefaultPolicy849A8BA1",
+    "WorkflowTaskServiceRoleCB3879DC"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyWorkflowStack/WorkflowTask/Resource",
+    "aws:asset:path": "asset.be9f8155d64b7ba787de8265217b74fcfee76b98c963b01d410e22d3a5cc2714",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "MyStateMachineRoleD59FFEBC": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "states.us-east-1.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyWorkflowStack/MyStateMachine/Role/Resource"
+   }
+  },
+  "MyStateMachineRoleDefaultPolicyE468EB18": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "WorkflowTask865FF66C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "WorkflowTask865FF66C",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "MyStateMachineRoleDefaultPolicyE468EB18",
+    "Roles": [
+     {
+      "Ref": "MyStateMachineRoleD59FFEBC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyWorkflowStack/MyStateMachine/Role/DefaultPolicy/Resource"
+   }
+  },
+  "MyStateMachine6C968CA5": {
+   "Type": "AWS::StepFunctions::StateMachine",
+   "Properties": {
+    "DefinitionString": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"StartAt\":\"Wait 5 Seconds\",\"States\":{\"Wait 5 Seconds\":{\"Type\":\"Wait\",\"Seconds\":5,\"Next\":\"Invoke Task\"},\"Invoke Task\":{\"End\":true,\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"MaxAttempts\":2}],\"Type\":\"Task\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+       {
+        "Fn::GetAtt": [
+         "WorkflowTask865FF66C",
+         "Arn"
+        ]
+       },
+       "\",\"Payload.$\":\"$\"}}}}"
+      ]
+     ]
+    },
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "MyStateMachineRoleD59FFEBC",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "MyStateMachineRoleDefaultPolicyE468EB18",
+    "MyStateMachineRoleD59FFEBC"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MyWorkflowStack/MyStateMachine/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/11OwUrDUBD8lt43K2l68WgFQVAoycFj2L5s4/Yl70l20yLh/bvkWUU8zczOMjNbLKt7LDd01cJ1vhjkiEtj5DzQVdtFdVz1JKE/0EQjG0/weAq/IsFA47EjXJ7m4ExiWO0fnkBoxKWOA6/njIc4iPvMIZkl0KolVTbFhxVAK9zPzrPtSRnU+ON0y9PWSL3iS+58Dpfo/z3g8kZi0BgZv5J7l5Cb/+qUoGaN8+QYcmFj1Evo88KbkSDEjvGsd5ftDssdlpuzihTTHExGxvobvwBgLtoQPwEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyWorkflowStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
