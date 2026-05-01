@@ -114,7 +114,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::093796422314:role/cdk-hnb659fds-deploy-role-093796422314-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::093796422314:role/cdk-hnb659fds-cfn-exec-role-093796422314-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-093796422314-us-east-1/d40f4834502e1008484d0f914c49d80c08ad41d6251b2d51f6092498b71980db.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-093796422314-us-east-1/8a709f2d9446542f513829433cb6a4cdc6aed9cd8582451e99181ab8a3e20707.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [

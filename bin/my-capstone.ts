@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { WorkflowStack } from '../lib/workflow-stack';
+import { WorkflowStack } from '../workflow-stack';
 import { PipelineStack } from '../lib/pipeline-stack'; // Add this import
 
 const app = new cdk.App();
