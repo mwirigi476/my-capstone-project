@@ -13,7 +13,7 @@ export class PipelineStack extends cdk.Stack {
         input: pipelines.CodePipelineSource.gitHub('mwirigi476/my-capstone-project', 'main', {
           authentication: cdk.SecretValue.secretsManager('github-token'),
         }),
-        commands: ['npm ci', 'npm run build', 'npx cdk synth'],
+        commands: ['npm ci', 'npx cdk synth'],
       }),
     });
   }
